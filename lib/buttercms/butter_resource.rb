@@ -1,11 +1,22 @@
 module ButterCMS
   class ButterResource
     attr_reader :meta, :data
+    
+    require 'ostruct'
+
+    def to_recursive_ostruct(hash)
+      OpenStruct.new(hash.each_with_object({}) do |(key, val), memo|
+        memo[key] = val.is_a?(Hash) ? to_recursive_ostruct(val) : val
+      end)
+    end
 
     def initialize(json)
       @json = json
       @data = HashToObject.convert(json["data"])
       @meta = HashToObject.convert(json["meta"]) if json["meta"]
+      
+      @data = to_recursive_ostruct(@data)
+      @meta = to_recursive_ostruct(@meta)
 
       if json["data"].is_a?(Hash)
         json["data"].each do |key, value|
