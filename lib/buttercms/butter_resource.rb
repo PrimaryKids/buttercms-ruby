@@ -16,7 +16,7 @@ module ButterCMS
       @meta = HashToObject.convert(json["meta"]) if json["meta"]
       
       @data = to_recursive_ostruct(@data)
-      @meta = to_recursive_ostruct(@meta)
+      @meta = to_recursive_ostruct(@meta) if @meta
 
       if json["data"].is_a?(Hash)
         json["data"].each do |key, value|
